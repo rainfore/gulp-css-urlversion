@@ -17,7 +17,6 @@ function md5ify(data) {
 
 module.exports = function(options) {
   options = options || {};
-  var baseDir = options.baseDir || process.cwd();
 
   return through.obj(function (file, enc, cb) {
     if (file.isNull()) {
@@ -43,12 +42,9 @@ module.exports = function(options) {
         replaceWithStr = str; // ignoring base64 and external links
       } else {
         var imagePath = null;
-        if (url.indexOf('/') === 0) { // root-relative url
-          imagePath = path.join(baseDir, url);
+        if (options.baseDir) {
+          imagePath = path.join(options.baseDir, url);
         } else { // this path should be threated as relative
-          gutil.log(
-            PLUGIN_NAME + ': Using a relative path in ' + path.basename(file.path) + ": " + url
-          );
           imagePath = path.resolve(path.dirname(file.path), url);
         }
 
